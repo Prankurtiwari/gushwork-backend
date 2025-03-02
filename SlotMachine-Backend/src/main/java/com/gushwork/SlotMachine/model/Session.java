@@ -1,20 +1,22 @@
 package com.gushwork.SlotMachine.model;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+
+import static com.gushwork.SlotMachine.constants.MachineConstant.KEY_SEPARATOR;
 
 
 public class Session {
     private final String sessionId;
     private final User user;
 
-    @Value("${app.default-credit}")
-    private int credit;
+    private int credit = 10;
 
     public Session(User user) {
         this.user = user;
-        this.sessionId = UUID.randomUUID().toString();
+        this.sessionId = UUID.randomUUID() + KEY_SEPARATOR + user.getEmail();;
     }
 
     public void setCredit(int credit) {

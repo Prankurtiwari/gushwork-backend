@@ -19,8 +19,7 @@ public class SessionRepositoryInMemoryImpl implements SessionRepository {
     @Override
     public Session createSession(User user) {
        Session session = new Session(user);
-       String key = session.getSessionId() + KEY_SEPARATOR + user.getEmail();
-       sessions.put(key, session);
+       sessions.put( session.getSessionId(), session);
        return session;
     }
 

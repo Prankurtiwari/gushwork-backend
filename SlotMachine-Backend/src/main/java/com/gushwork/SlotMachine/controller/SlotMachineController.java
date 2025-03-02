@@ -1,10 +1,14 @@
 package com.gushwork.SlotMachine.controller;
 
+import com.gushwork.SlotMachine.exceptions.CreditNotEnoughException;
+import com.gushwork.SlotMachine.exceptions.InvalidUserException;
 import com.gushwork.SlotMachine.model.RollResult;
 import com.gushwork.SlotMachine.model.Session;
 import com.gushwork.SlotMachine.model.User;
 import com.gushwork.SlotMachine.service.SlotMachineService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,17 +21,25 @@ public class SlotMachineController {
     }
 
     @PostMapping("/start")
-    public Session startGame(@Valid @RequestBody User user) {
-        return slotMachineService.createSession(user);
+    public ResponseEntity<Session> startGame(@Valid @RequestBody User user) {
+        return ResponseEntity.ok(slotMachineService.createSession(user));
     }
 
-    @PostMapping("/roll/{sessionId}")
-    public RollResult roll(@PathVariable String sessionId) {
-        return slotMachineService.roll(sessionId);
+    @GetMapping("/roll/{sessionId}")
+    public ResponseEntity<?> roll(@PathVariable String sessionId) {
+        try {
+            return ResponseEntity.ok(slotMachineService.roll(sessionId));
+        } catch (InvalidUserException | CreditNotEnoughException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 
-    @PostMapping("/cash-out/{sessionId}")
-    public int cashOut(@PathVariable String sessionId) {
-        return slotMachineService.cashOut(sessionId);
+    @GetMapping("/cash-out/{sessionId}")
+    public ResponseEntity<?>  cashOut(@PathVariable String sessionId) {
+        try {
+            return ResponseEntity.ok(slotMachineService.cashOut(sessionId));
+        } catch (InvalidUserException | CreditNotEnoughException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
     }
 }

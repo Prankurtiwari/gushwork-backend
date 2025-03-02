@@ -80,6 +80,9 @@ public class SlotMachineService {
         if (session == null) {
             throw new InvalidUserException(INVALID_USER);
         }
+        if (session.getCredit() <= 0) {
+            throw new CreditNotEnoughException(CREDIT_NOT_ENOUGH);
+        }
         synchronized (session) {
             int creditsToCashOut = session.getCredit();
             logger.info("Cashing out {} credits for user : {}", creditsToCashOut, session.getUser().getEmail());
