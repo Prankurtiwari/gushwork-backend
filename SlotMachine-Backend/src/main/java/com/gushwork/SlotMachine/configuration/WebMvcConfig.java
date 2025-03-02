@@ -10,6 +10,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestTimingInterceptor()).addPathPatterns("/v1/api/**");
+        registry.addInterceptor(new RequestTimingInterceptor()).addPathPatterns("/api/**");
     }
 }

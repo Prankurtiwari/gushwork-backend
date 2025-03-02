@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/api/slot-machine")
+@RequestMapping("/api/v1/slot-machine")
 public class SlotMachineController {
     private final SlotMachineService slotMachineService;
 
