@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.gushwork.SlotMachine.constants.MachineConstant.KEY_SEPARATOR;
-
 @Repository
 @Primary
 public class SessionRepositoryInMemoryImpl implements SessionRepository {

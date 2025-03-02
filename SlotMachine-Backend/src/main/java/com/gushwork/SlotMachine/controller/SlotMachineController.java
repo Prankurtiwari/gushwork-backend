@@ -2,12 +2,10 @@ package com.gushwork.SlotMachine.controller;
 
 import com.gushwork.SlotMachine.exceptions.CreditNotEnoughException;
 import com.gushwork.SlotMachine.exceptions.InvalidUserException;
-import com.gushwork.SlotMachine.model.RollResult;
 import com.gushwork.SlotMachine.model.Session;
 import com.gushwork.SlotMachine.model.User;
 import com.gushwork.SlotMachine.service.SlotMachineService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

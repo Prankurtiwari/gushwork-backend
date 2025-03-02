@@ -1,8 +1,5 @@
 package com.gushwork.SlotMachine.model;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.util.UUID;
 
 import static com.gushwork.SlotMachine.constants.MachineConstant.KEY_SEPARATOR;
