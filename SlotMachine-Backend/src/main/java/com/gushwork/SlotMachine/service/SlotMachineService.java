@@ -5,7 +5,6 @@ import com.gushwork.SlotMachine.exceptions.InvalidUserException;
 import com.gushwork.SlotMachine.model.RollResult;
 import com.gushwork.SlotMachine.model.Session;
 import com.gushwork.SlotMachine.model.Symbol;
-import com.gushwork.SlotMachine.model.User;
 import com.gushwork.SlotMachine.respository.SessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,10 @@ public class SlotMachineService {
         this.rollStrategy = rollStrategy;
     }
 
-    public Session createSession(User user) {
-        logger.info("Creating a new game session for user name: " + user.getName() + " email id : " + user.getEmail());
-        return  sessionRepository.createSession(user);
+    public Session createSession() {
+        Session session = sessionRepository.createSession();
+        logger.info("Creating a new game session for session id: " + session.getSessionId());
+        return session;
     }
 
     public RollResult roll(String sessionId) {
@@ -50,16 +50,16 @@ public class SlotMachineService {
             throw new InvalidUserException(INVALID_USER);
         }
         synchronized (session) {
-            if (session.getCredit() < 1) {
+            if (session.getCredits() < 1) {
                 throw new CreditNotEnoughException(CREDIT_NOT_ENOUGH);
             }
-            logger.info("Rolling the slot for user: {}", session.getUser().getEmail());
-            session.setCredit(session.getCredit() - oneRollCredit);
-            logger.info("User {} rolled, 1 credit deducted. Remaining credits: {}", session.getUser().getEmail(), session.getCredit());
+            logger.info("Rolling the slot for session id: {}", sessionId);
+            session.setCredits(session.getCredits() - oneRollCredit);
+            logger.info("Session {} rolled, 1 credit deducted. Remaining credits: {}", sessionId, session.getCredits());
             List<Symbol> symbols = generateRandomSymbols();
             boolean isWinner = symbols.stream().distinct().count() == 1;
             int reward = isWinner ? symbols.get(0).getReward() : 0;
-            if (isWinner && rollStrategy.shouldRoll(session.getCredit())) {
+            if (isWinner && rollStrategy.shouldRoll(session.getCredits())) {
                 logger.info("Re-rolling due to server pivoted logic.");
                 symbols = generateRandomSymbols();
                 isWinner = false;
@@ -67,11 +67,11 @@ public class SlotMachineService {
             }
 
             if (isWinner) {
-                logger.info("User {} won! Reward: {} credits. ", session.getUser().getEmail(), reward);
-                session.setCredit(session.getCredit() + reward);
+                logger.info("Session {} won! Reward: {} credits. ",sessionId, reward);
+                session.setCredits(session.getCredits() + reward);
             }
-            logger.info("User {} final {} credits. ", session.getUser().getEmail(), session.getCredit());
-            return new RollResult(symbols, isWinner, reward, session.getCredit());
+            logger.info("Session {} final {} credits. ", sessionId, session.getCredits());
+            return new RollResult(symbols, isWinner, reward, session.getCredits());
         }
     }
 
@@ -80,12 +80,12 @@ public class SlotMachineService {
         if (session == null) {
             throw new InvalidUserException(INVALID_USER);
         }
-        if (session.getCredit() <= 0) {
+        if (session.getCredits() <= 0) {
             throw new CreditNotEnoughException(CREDIT_NOT_ENOUGH);
         }
         synchronized (session) {
-            int creditsToCashOut = session.getCredit();
-            logger.info("Cashing out {} credits for user : {}", creditsToCashOut, session.getUser().getEmail());
+            int creditsToCashOut = session.getCredits();
+            logger.info("Cashing out {} credits for session : {}", creditsToCashOut, sessionId);
             sessionRepository.deleteSession(sessionId);
             return creditsToCashOut;
         }
